@@ -1,0 +1,294 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+const int SIZE = 8;
+
+// Customer Information
+string customerName;
+string customerId;
+string customerType;
+string paymentMethod;
+
+// Grocery Items
+string itemNames[SIZE] =
+{
+    "Rice 1 KG",
+    "Sugar 1 KG",
+    "Cooking Oil 1 Litre",
+    "Milk Pack",
+    "Tea Pack",
+    "Flour 5 KG",
+    "Eggs Dozen",
+    "Detergent"
+};
+
+double itemPrices[SIZE] =
+{
+    350,
+    180,
+    580,
+    220,
+    450,
+    950,
+    320,
+    600
+};
+
+int quantities[SIZE] = {0};
+
+// Function Prototypes
+void registerCustomer();
+void displayGroceryList();
+void addItemsToCart();
+double calculateGrossBill();
+double calculateSalesTax();
+double calculateMembershipDiscount(double bill);
+double calculateBillDiscount(double bill);
+double calculateCardCharges(double bill);
+void calculateLoyaltyPoints(double bill);
+void displayFinalBill();
+
+int main()
+{
+    registerCustomer();
+
+    int choice;
+    do
+    {
+        cout << "\n\n========== GROCERY MART ==========\n";
+        cout << "1. View Grocery Items\n";
+        cout << "2. Add Items To Cart\n";
+        cout << "3. Calculate Bill\n";
+        cout << "4. Exit\n";
+        cout << "Enter Choice: ";
+        cin >> choice;
+
+        switch(choice)
+        {
+            case 1:
+                displayGroceryList();
+                break;
+
+            case 2:
+                addItemsToCart();
+                break;
+
+            case 3:
+                displayFinalBill();
+                break;
+
+            case 4:
+                cout << "\nThank You For Shopping!\n";
+                break;
+
+            default:
+                cout << "\nInvalid Choice!\n";
+        }
+
+    } while(choice != 4);
+
+    return 0;
+}
+
+// Register Customer
+void registerCustomer()
+{
+    cin.ignore();
+    cout << "========== CUSTOMER REGISTRATION ==========\n";
+
+    cout << "Enter Customer Name: ";
+    getline(cin, customerName);
+
+    cout << "Enter Customer ID: ";
+    getline(cin, customerId);
+
+    int choice;
+
+    cout << "\nCustomer Type\n";
+    cout << "1. Regular Customer\n";
+    cout << "2. Member Customer\n";
+    cout << "Enter Choice: ";
+    cin >> choice;
+
+    if(choice == 1)
+        customerType = "Regular";
+    else
+        customerType = "Member";
+
+    cout << "\nPayment Method\n";
+    cout << "1. Cash\n";
+    cout << "2. Card\n";
+    cout << "Enter Choice: ";
+    cin >> choice;
+
+    if(choice == 1)
+        paymentMethod = "Cash";
+    else
+        paymentMethod = "Card";
+}
+
+// Display Grocery List
+void displayGroceryList()
+{
+    cout << "\n========== GROCERY ITEMS ==========\n";
+
+    for(int i = 0; i < SIZE; i++)
+    {
+        cout << i + 1 << ". " << itemNames[i]
+             << " - Rs. " << itemPrices[i] << endl;
+    }
+}
+
+// Add Items
+void addItemsToCart()
+{
+    int itemNo, quantity;
+    char more;
+
+    do
+    {
+        displayGroceryList();
+
+        cout << "\nEnter Item Number: ";
+        cin >> itemNo;
+
+        if(itemNo >= 1 && itemNo <= SIZE)
+        {
+            cout << "Enter Quantity: ";
+            cin >> quantity;
+            quantities[itemNo - 1] += quantity;
+        }
+        else
+        {
+            cout << "Invalid Item Number!\n";
+        }
+
+        cout << "\nAdd More Items? (Y/N): ";
+        cin >> more;
+
+    } while(more == 'Y' || more == 'y');
+}
+
+// Gross Bill
+double calculateGrossBill()
+{
+    double total = 0;
+
+    for(int i = 0; i < SIZE; i++)
+    {
+        total += quantities[i] * itemPrices[i];
+    }
+
+    return total;
+}
+
+// Sales Tax
+double calculateSalesTax()
+{
+    double tax = 0;
+
+    for(int i = 0; i < SIZE; i++)
+    {
+        double itemTotal = quantities[i] * itemPrices[i];
+
+        if(i <= 6)
+            tax += itemTotal * 0.05;
+        else
+            tax += itemTotal * 0.10;
+    }
+
+    return tax;
+}
+
+// Membership Discount
+double calculateMembershipDiscount(double bill)
+{
+    if(customerType == "Member")
+        return bill * 0.07;
+
+    return 0;
+}
+
+// Bill Discount
+double calculateBillDiscount(double bill)
+{
+    if(bill >= 5000 && bill <= 10000)
+        return bill * 0.05;
+    else if(bill > 10000)
+        return bill * 0.10;
+
+    return 0;
+}
+
+// Card Charges
+double calculateCardCharges(double bill)
+{
+    if(paymentMethod == "Card")
+        return bill * 0.02;
+
+    return 0;
+}
+
+// Loyalty Points
+void calculateLoyaltyPoints(double bill)
+{
+    int generatedPoints = bill / 100;
+    int existingPoints;
+
+    cout << "\nGenerated Loyalty Points: " << generatedPoints;
+    cout << "\nEnter Existing Loyalty Points: ";
+    cin >> existingPoints;
+
+    int totalPoints = generatedPoints + existingPoints;
+
+    cout << "\nUpdated Loyalty Points: " << totalPoints << endl;
+
+    int choice;
+    cout << "\n1. Redeem Points";
+    cout << "\n2. Continue";
+    cout << "\nEnter Choice: ";
+    cin >> choice;
+
+    if(choice == 1)
+    {
+        cout << "\nDiscount From Points: Rs. " << totalPoints << endl;
+    }
+}
+
+// Final Bill
+void displayFinalBill()
+{
+    double grossBill = calculateGrossBill();
+    double salesTax = calculateSalesTax();
+    double memberDiscount = calculateMembershipDiscount(grossBill);
+    double billDiscount = calculateBillDiscount(grossBill);
+    double cardCharges = calculateCardCharges(grossBill);
+
+    double finalBill =
+        grossBill +
+        salesTax +
+        cardCharges -
+        memberDiscount -
+        billDiscount;
+
+    cout << fixed << setprecision(2);
+
+    cout << "\n\n========== GROCERY MART BILL ==========\n";
+    cout << "Customer Name : " << customerName << endl;
+    cout << "Customer Type : " << customerType << endl;
+    cout << "Payment Method : " << paymentMethod << endl;
+
+    cout << "Gross Bill : Rs. " << grossBill << endl;
+    cout << "Sales Tax : Rs. " << salesTax << endl;
+    cout << "Membership Discount : Rs. " << memberDiscount << endl;
+    cout << "Bill Discount : Rs. " << billDiscount << endl;
+    cout << "Card Charges : Rs. " << cardCharges << endl;
+
+    cout << "-------------------------------------\n";
+    cout << "Total Payable Bill : Rs. " << finalBill << endl;
+
+    calculateLoyaltyPoints(finalBill);
+
+    cout << "\nThank You For Shopping :)\n";
+}
