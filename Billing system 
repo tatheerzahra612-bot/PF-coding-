@@ -1,0 +1,202 @@
+#include <iostream>
+#include <iomanip>
+#include <string>
+using namespace std;
+
+// Global Variables
+string customerName;
+string customerId;
+string customerType;
+
+// Function Prototypes
+void registerCustomer();
+void displayMenu();
+double calculateConsumptionCharges(int units);
+double calculateGST(double amount);
+double calculateIncomeTax(double amount);
+double calculateElectricityDuty(double amount);
+double calculateFixedCharges(int units);
+double calculateNewConnectionCharges();
+void displayCustomerDetails();
+void displayFinalBill();
+
+int main()
+{
+    registerCustomer();
+
+    int choice;
+
+    do
+    {
+        displayMenu();
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            displayCustomerDetails();
+            break;
+
+        case 2:
+            displayFinalBill();
+            break;
+
+        case 3:
+            cout << "\nThank You for Using LESCO Billing System!\n";
+            break;
+
+        default:
+            cout << "\nInvalid Choice! Try Again.\n";
+        }
+
+    } while (choice != 3);
+
+    return 0;
+}
+
+// Register Customer
+void registerCustomer()
+{
+    cin.ignore();
+
+    cout << "Enter Customer Name: ";
+    getline(cin, customerName);
+
+    cout << "Enter Customer ID: ";
+    getline(cin, customerId);
+
+    cout << "Enter Customer Type (Domestic/Commercial): ";
+    getline(cin, customerType);
+}
+
+// Menu
+void displayMenu()
+{
+    cout << "\n\n===== LESCO ELECTRICITY BILL MANAGEMENT SYSTEM =====\n";
+    cout << "1. Display Customer Details\n";
+    cout << "2. Generate Bill\n";
+    cout << "3. Exit\n";
+    cout << "Enter Your Choice: ";
+}
+
+// Consumption Charges
+double calculateConsumptionCharges(int units)
+{
+    if (units <= 100)
+        return units * 12;
+
+    else if (units <= 300)
+        return (100 * 12) + ((units - 100) * 18);
+
+    else
+        return (100 * 12) + (200 * 18) + ((units - 300) * 25);
+}
+
+// GST
+double calculateGST(double amount)
+{
+    return amount * 0.17;
+}
+
+// Income Tax
+double calculateIncomeTax(double amount)
+{
+    if (amount > 25000)
+        return amount * 0.075;
+
+    return 0;
+}
+
+// Electricity Duty
+double calculateElectricityDuty(double amount)
+{
+    return amount * 0.015;
+}
+
+// Fixed Charges
+double calculateFixedCharges(int units)
+{
+    if (units <= 100)
+        return 50;
+    else if (units <= 300)
+        return 150;
+    else
+        return 300;
+}
+
+// New Connection Charges
+double calculateNewConnectionCharges()
+{
+    return 5000;
+}
+
+// Display Customer Details
+void displayCustomerDetails()
+{
+    cout << "\n\nCustomer Details\n";
+    cout << "Customer Name : " << customerName << endl;
+    cout << "Customer ID : " << customerId << endl;
+    cout << "Customer Type : " << customerType << endl;
+}
+
+// Final Bill
+void displayFinalBill()
+{
+    int units;
+
+    cout << "\nEnter Units Consumed: ";
+    cin >> units;
+
+    double consumption =
+        calculateConsumptionCharges(units);
+
+    double duty =
+        calculateElectricityDuty(consumption);
+
+    double fixedCharges =
+        calculateFixedCharges(units);
+
+    double gst =
+        calculateGST(consumption);
+
+    double incomeTax =
+        calculateIncomeTax(consumption);
+
+    double meterRent = 250;
+    double tvFee = 35;
+
+    double totalBill =
+        consumption +
+        duty +
+        fixedCharges +
+        gst +
+        incomeTax +
+        meterRent +
+        tvFee;
+
+    cout << fixed << setprecision(2);
+
+    cout << "\n\n========== LESCO ELECTRICITY BILL ==========\n";
+    cout << "Customer Name : " << customerName << endl;
+    cout << "Customer ID : " << customerId << endl;
+    cout << "Customer Type : " << customerType << endl;
+    cout << "Units Consumed: " << units << endl;
+    cout << "Consumption Charges : Rs. "
+         << consumption << endl;
+    cout << "Electricity Duty : Rs. "
+         << duty << endl;
+    cout << "Fixed Charges : Rs. "
+         << fixedCharges << endl;
+    cout << "Meter Rent : Rs. "
+         << meterRent << endl;
+    cout << "TV Fee : Rs. "
+         << tvFee << endl;
+    cout << "GST : Rs. "
+         << gst << endl;
+    cout << "Income Tax : Rs. "
+         << incomeTax << endl;
+    cout << "------------------------------------------\n";
+    cout << "Total Payable Bill : Rs. "
+         << totalBill << endl;
+    cout << "==========================================\n";
+}
